@@ -1,7 +1,7 @@
 Mitosis_Detection
 ==============================
 
-develop an algorithm that support histophathologists in the detecting of
+Develop an AI algorithm that support histophathologists in the detection of Mitosis
 
 Project Organization
 ------------
@@ -54,4 +54,39 @@ Project Organization
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+General domain description
+==========================
+
+Mitotic count is an important parameter in breast cancer grading as it gives an evaluation of the agressiveness of the 
+tumour. However, mitosis detection is a challenging problem and has not been addressed well in the literature. This is due
+to the fact that mitosis are small objects with a large variety of shape configurations. The four main phases of a mitosis
+are prophase, metaphase, anaphase and telophase. The shape of the nucleus  is very different depending on the phase of the
+mitosis. On its last stage, the telophase, a mitosis has two distinct nuclei, but they are not yet full individual cells. 
+A mitosis in telophase must be counted as a single mitosis, it should not be miscounted as two mitosis. Artefacts are also
+common and should not be confused with mitosis. 
+
+The data you receive are H&E stained histological images of different breast cancers prepared on 5 
+slides and each slide is scanned on two scanners. The data of scanner A can be found in the folders A*; 
+data of scanner H can be found in folders H* (e.g. data of slide 0 scanned on scanner A is in found A00_v2,
+the same slide scanned on scanner H is found in H00_v2).
+
+Our objective is to develop an algorithm that support histophathologists in the detecting of
+mitosis on these type of images.
+
+Data description
+================
+
+The data is organized as follows.
+
+Each scanned image consists of a raw image, the desired output
+as a pixel list and an overlay of both.
+
+For example:
+
+Input image: A00_00.png
+Annotations: A00_00.csv
+Overlay: A00_00.jpg
+
+The annotations are organized one mitosis per line.
+Each line lists the coordinates of all pixels belonging
+to one mitosis segment.
