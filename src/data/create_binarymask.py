@@ -1,6 +1,6 @@
 # import libraries
 import os
-import sys
+import argparse
 import csv
 import numpy as np
 from PIL import Image
@@ -16,8 +16,13 @@ def create_binary_mask(image_size, coordinates):
 
 if __name__ == '__main__':
 
-    # Path to the data folder
-    data_folder = sys.argv[1]
+    # Create the argument parser
+    parser = argparse.ArgumentParser(description='Create binary mask for given directory')
+    parser.add_argument('--root', '-r', help='Root folder path')
+    args = parser.parse_args()
+
+    # Read the arguments
+    data_folder = args.root
 
     # Iterate over images in the folder
     for sub_folder in os.listdir(data_folder):

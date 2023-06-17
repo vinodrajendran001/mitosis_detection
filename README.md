@@ -94,3 +94,22 @@ to one mitosis segment.
 ```
 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
 ```
+
+## Solution
+
+### Data stats
+
+![Scanners Stats](reports/figures/data_count.png)
+
+
+### Create binary mask
+
+```
+(seg) user@systemname:project_directory$ python src/data/create_binarymask.py --root /path/to/root/folder
+```
+
+### Process dataset for train and val 
+
+```
+(seg) user@systemname:project_directory$ python src/data/process_dataset.py --root /path/to/root/folder --train /path/to/train/folder --val /path/to/val/folder
+```
