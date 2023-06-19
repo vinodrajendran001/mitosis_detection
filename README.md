@@ -113,3 +113,11 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 ```
 (seg) user@systemname:project_directory$ python src/data/process_dataset.py --root /path/to/root/folder --train /path/to/train/folder --val /path/to/val/folder
 ```
+
+### UNet model
+
+```
+(seg) user@systemname:project_directory$ python src/models/UNet/train.py -d /data1/vinod/mitosis/data/processed -cp models/UNet/version1.0 -e 50 -b 8 -l 3e-4 -s 572 -c 1
+```
+
+![Model performance](reports/figures/unet_training.png)
