@@ -1,3 +1,4 @@
+absl-py==1.4.0
 aiohttp==3.8.4
 aiosignal==1.3.1
 albumentations==1.3.1
@@ -12,9 +13,10 @@ attrs==23.1.0
 backcall==0.2.0
 beautifulsoup4==4.12.2
 bleach==6.0.0
+cachetools==5.3.1
 certifi==2022.12.7
 cffi==1.15.1
-charset-normalizer==2.1.1
+charset-normalizer==2.0.12
 click==8.1.3
 cmake==3.25.0
 comm==0.1.3
@@ -37,6 +39,9 @@ frozenlist==1.3.3
 fsspec==2023.6.0
 gitdb==4.0.10
 GitPython==3.1.31
+google-auth==2.20.0
+google-auth-oauthlib==1.0.0
+grpcio==1.54.2
 huggingface-hub==0.15.1
 idna==3.4
 imageio==2.31.1
@@ -66,6 +71,7 @@ kiwisolver==1.4.4
 lazy_loader==0.2
 lightning-utilities==0.8.0
 lit==15.0.7
+Markdown==3.4.3
 MarkupSafe==2.1.3
 matplotlib==3.7.1
 matplotlib-inline==0.1.6
@@ -84,6 +90,7 @@ networkx==3.0
 notebook==6.5.4
 notebook_shim==0.2.3
 numpy==1.24.3
+oauthlib==3.2.2
 opencv-python-headless==4.7.0.72
 overrides==7.3.1
 packaging==23.1
@@ -104,6 +111,8 @@ psutil==5.9.5
 ptyprocess==0.7.0
 pure-eval==0.2.2
 pyarrow==12.0.1
+pyasn1==0.5.0
+pyasn1-modules==0.3.0
 pycparser==2.21
 Pygments==2.15.1
 pyparsing==3.0.9
@@ -119,9 +128,11 @@ qtconsole==5.4.3
 QtPy==2.3.1
 qudida==0.0.4
 regex==2023.6.3
-requests==2.28.1
+requests==2.27.1
+requests-oauthlib==1.3.1
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
+rsa==4.9
 safetensors==0.3.1
 scikit-image==0.21.0
 scikit-learn==1.2.2
@@ -136,6 +147,8 @@ sniffio==1.3.0
 soupsieve==2.4.1
 stack-data==0.6.2
 sympy==1.11.1
+tensorboard==2.13.0
+tensorboard-data-server==0.7.1
 terminado==0.17.1
 threadpoolctl==3.1.0
 tifffile==2023.4.12
@@ -160,6 +173,7 @@ wcwidth==0.2.6
 webcolors==1.13
 webencodings==0.5.1
 websocket-client==1.5.3
+Werkzeug==2.3.6
 widgetsnbextension==4.0.7
 wrapt==1.15.0
 xxhash==3.2.0
