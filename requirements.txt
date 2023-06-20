@@ -45,7 +45,7 @@ grpcio==1.54.2
 huggingface-hub==0.15.1
 idna==3.4
 imageio==2.31.1
-importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib-metadata_1682176699712/work
+importlib-metadata @ file:///home/conda/feedstock_root/build_artifacts/importlib-metadata_1687138353019/work
 importlib-resources==5.12.0
 install==1.3.5
 ipykernel==6.23.2
@@ -102,7 +102,7 @@ pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==9.5.0
 pip-system-certs==4.0
-platformdirs @ file:///home/conda/feedstock_root/build_artifacts/platformdirs_1686403120743/work
+platformdirs @ file:///home/conda/feedstock_root/build_artifacts/platformdirs_1687097136512/work
 pretrainedmodels==0.7.4
 prometheus-client==0.17.0
 prompt-toolkit==3.0.38
