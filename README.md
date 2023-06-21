@@ -124,6 +124,21 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 
 ### Segformer
 
+#### Train model
 ```
 (seg) user@systemname:project_directory$ python src/models/Segformer/train.py --data_dir /path/to/root/folder --checkpoint_dir /path/to/checkpoint/folder --epochs 50 --batch-size 8 --accelerator gpu --deviceid 1 --patience 10 -mi 10 -vmi 5
 ```
+
+| Test Metric         | Score                   |
+| :---:               | :---:                   | 
+| test_loss           | 0.05111832916736603     |
+| test_mean_accuracy  | 0.5                     |
+| test_mean_iou       | 0.4995069001850329      |
+
+#### Prediction
+
+```
+(seg) user@systemname:project_directory$ python src/models/Segformer/predict.py --data_dir /path/to/root/folder --checkpoint_dir /path/to/checkpoints/checkpointfile.ckpt --test_idx 5 --save_dir /path/to/save/folder
+```
+
+![Segformer output](reports/figures/segformer_output.png)

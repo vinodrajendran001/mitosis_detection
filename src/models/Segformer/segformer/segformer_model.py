@@ -36,6 +36,8 @@ class SegformerFinetuner(pl.LightningModule):
 
         self.validation_step_outputs = []
         self.test_step_outputs = []
+
+        self.save_hyperparameters()
         
     def forward(self, images, masks):
         outputs = self.model(pixel_values=images, labels=masks)
