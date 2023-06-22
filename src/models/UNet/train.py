@@ -20,10 +20,11 @@ from torchvision.datasets import ImageFolder
 from albumentations.pytorch import ToTensorV2 
 from torch.utils.data import DataLoader, Dataset
 
+
 from pathlib import Path
 from unet import UNet
 from utils.data_loading import MitosisDataset
-from utils.utils import dice_loss
+
 
 
 def train_model(model,dataloader,batch_size,criterion,optimizer,gradient_clipping):
@@ -43,10 +44,9 @@ def train_model(model,dataloader,batch_size,criterion,optimizer,gradient_clippin
     train_loss = train_running_loss / (j+1)
     return train_loss
 
-def val_model(model,dataloader,batch_size,criterion,criterion_dice,scheduler):
+def val_model(model,dataloader,batch_size,criterion):
     model.eval()
     val_running_loss = 0
-    val_running_diceloss = 0
     with torch.no_grad():
         for j,img_mask in enumerate(tqdm(dataloader)):
             img = img_mask[0].float().to(device)
@@ -56,13 +56,10 @@ def val_model(model,dataloader,batch_size,criterion,criterion_dice,scheduler):
             loss = criterion(y_pred,mask)
             val_running_loss += loss.item() * batch_size
 
-            diceloss = criterion_dice(y_pred,mask)
-            val_running_diceloss += diceloss.item() * batch_size
             
         val_loss = val_running_loss / (j+1)
-        val_diceloss = val_running_diceloss / (j+1)
-        scheduler.step(val_diceloss)
-    return val_loss, val_diceloss
+
+    return val_loss
 
 def main(
         model,
@@ -132,22 +129,18 @@ def main(
                               lr=learning_rate, weight_decay=weight_decay, foreach=True)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=5) 
     criterion = nn.BCEWithLogitsLoss()
-    criterion_dice = dice_loss
     train_loss_lst = []
     val_loss_lst = []
-    val_diceloss_lst = []
      
 
     # 5. Begin training
     for i in tqdm(range(epochs)):
         train_loss = train_model(model=model,dataloader=train_dataloader,batch_size=batch_size,criterion=criterion,optimizer=optimizer,gradient_clipping=gradient_clipping)
-        val_loss, val_diceloss = val_model(model=model,dataloader=val_dataloader,batch_size=batch_size,criterion=criterion,criterion_dice=criterion_dice,scheduler=scheduler)
+        val_loss = val_model(model=model,dataloader=val_dataloader,batch_size=batch_size,criterion=criterion)
         train_loss_lst.append(train_loss)
         val_loss_lst.append(val_loss)
-        val_diceloss_lst.append(val_diceloss)
         print(f" Train Loss : {train_loss:.4f}")
         print(f" Validation Loss : {val_loss:.4f}")
-        print(f" Validation Dice Loss : {val_diceloss:.4f}")
 
         if save_checkpoint and i%10 == 0:
             Path(checkpoint_dir).mkdir(parents=True, exist_ok=True)
@@ -157,7 +150,6 @@ def main(
 
     plt.plot(train_loss_lst, color="green", label='train loss')
     plt.plot(val_loss_lst, color="red", label='validation loss')
-    plt.plot(val_diceloss_lst, color="yellow", label='validation dice loss')
     plt.xlabel("epochs")
     plt.ylabel("loss")
     plt.legend()

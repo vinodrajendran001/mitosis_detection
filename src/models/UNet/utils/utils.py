@@ -20,3 +20,10 @@ def dice_loss(preds, targets):
     union = torch.sum(preds) + torch.sum(targets)
     dice = (2. * intersection + smooth) / (union + smooth)
     return 1 - dice
+
+def iou_loss(preds, targets):
+    smooth = 1e-7
+    intersection = torch.sum(preds * targets)
+    union = torch.sum(preds) + torch.sum(targets) - intersection
+    iou = (intersection + smooth) / (union + smooth)
+    return iou

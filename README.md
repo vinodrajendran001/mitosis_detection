@@ -122,6 +122,19 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 
 ![Model performance](reports/figures/unet_training.png)
 
+| Test Metric         | Score                   |
+| :---:               | :---:                   | 
+| train_loss          | 0.00198                 |
+| valid_loss          | 0.0334                  |
+
+#### Prediction
+
+```
+(seg) user@systemname:project_directory$ python src/models/UNet/predict.py --image /path/to/input/image.png --model_load /path/to/checkpoint/file.pth --save_dir /path/to/save/output
+```
+
+![UNet output](reports/figures/unet_output.png)
+
 ### Segformer
 
 #### Train model
