@@ -12,13 +12,13 @@ from torchvision import transforms, datasets
 import numpy as np
 
 from unet import UNet
-from celldata import CellDataset
-from metric import iou, pix_acc
-from loss import Weighted_Cross_Entropy_Loss
-from augmentation import (
+from utils.data_loading import MitosisDataset
+from utils.metric import iou, pix_acc
+from utils.loss import Weighted_Cross_Entropy_Loss
+from utils.augmentation import (
     DoubleCompose, DoubleToTensor,
     DoubleHorizontalFlip, DoubleVerticalFlip, DoubleElasticTransform,
-    GaussianNoise
+    GaussianNoise, DoubleToResize
 )
 # from apex import amp, optimizers
 
@@ -81,7 +81,7 @@ def parse_args():
         help='how many batches to wait before logging training status'
     )
     parser.add_argument(
-        '--save', action='store_true', default=False,
+        '--save', action='store_true', default=True,
         help='save the current model'
     )
     parser.add_argument(
@@ -92,11 +92,21 @@ def parse_args():
         '--tensorboard', action='store_true', default=False,
         help='record training log to Tensorboard'
     )
+    parser.add_argument(
+        '--img_size', type=int, default=512, metavar='I',
+        help='random seed (default: 1)'
+    )
+    parser.add_argument(
+        '--data_dir', type=str, default=None,
+        help='Root directory of dataset'
+    )
+
+
     args = parser.parse_args()
     return args
 
 
-def get_train_loader(mean, std, out_size, batch_size):
+def get_train_loader(mean, std, out_size, batch_size, data_dir):
     """Initialize Dataloader for training set
 
         mean (float): mean of pixel values
@@ -106,20 +116,23 @@ def get_train_loader(mean, std, out_size, batch_size):
         pct (float): percentage of data to use for training (0 < pct <= 1)
     """
     image_mask_transform = DoubleCompose([
-        DoubleToTensor(),
-        DoubleElasticTransform(alpha=250, sigma=10),
+        DoubleToResize(size=out_size),
+        DoubleToTensor(),   
+        # DoubleElasticTransform(alpha=250, sigma=10),
         DoubleHorizontalFlip(),
         DoubleVerticalFlip()
     ])
     image_transform = transforms.Compose([
+        transforms.Resize(size=(out_size, out_size)),
         transforms.ColorJitter(brightness=0.4),
         transforms.Normalize(mean, std),
         GaussianNoise(),
         transforms.Pad(30, padding_mode='reflect')
     ])
-    mask_transform = transforms.CenterCrop(out_size)
+    mask_transform = transforms.Resize(size=(out_size, out_size))
 
     train_data = MitosisDataset(
+        root_dir=data_dir,
         image_mask_transform=image_mask_transform,
         image_transform=image_transform,
         mask_transform=mask_transform
@@ -132,7 +145,7 @@ def get_train_loader(mean, std, out_size, batch_size):
     return train_loader
 
 
-def get_test_loader(mean, std, out_size, batch_size):
+def get_test_loader(mean, std, out_size, batch_size, data_dir):
     """Initialize Dataloader for validation set
 
         mean (float): mean of pixel values
@@ -141,16 +154,18 @@ def get_test_loader(mean, std, out_size, batch_size):
         batch_size (int): number of samples to load for each iteration
     """
     image_transform = transforms.Compose([
+        transforms.Resize(size=(out_size, out_size)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std),
         transforms.Pad(30, padding_mode='reflect')
     ])
     mask_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.CenterCrop(388)
+        transforms.Resize(size=(out_size, out_size)),
+        transforms.ToTensor()
     ])
 
     test_data = MitosisDataset(
+        root_dir=data_dir,
         image_transform=image_transform,
         mask_transform=mask_transform,
         data_type='validate'
@@ -179,7 +194,7 @@ def train(model, device, data_loader, optimizer, criterion, epoch):
     loss = 0.
     for step, sample in enumerate(data_loader):
         # forward pass
-        X = sample['image'].to(device)
+        X = sample['image'].float().to(device)
         y = sample['mask'].to(device)
         w = sample['weight'].to(device)
         y = y.squeeze(1).long()  # remove channel dimension
@@ -312,9 +327,9 @@ if __name__ == '__main__':
     # initialize dataloader
     mean = 0.495
     std = 0.173
-    out_size = 388  # output dimension of segmentation map
-    train_loader = get_train_loader(mean, std, out_size, args.batch_size)
-    test_loader = get_test_loader(mean, std, out_size, args.test_batch_size)
+    out_size = args.img_size  # output dimension of segmentation map
+    train_loader = get_train_loader(mean, std, out_size, args.batch_size, args.data_dir)
+    test_loader = get_test_loader(mean, std, out_size, args.test_batch_size, args.data_dir)
     # define loss function
     criterion = Weighted_Cross_Entropy_Loss()
     # train and evaluate model

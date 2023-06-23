@@ -11,7 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from augmentation import (
+from utils.augmentation import (
     DoubleCompose, DoubleToTensor,
     DoubleHorizontalFlip, DoubleVerticalFlip, DoubleElasticTransform
 )
@@ -22,7 +22,7 @@ class MitosisDataset(Dataset):
     def __init__(
         self, root_dir=None,
         image_mask_transform=None, image_transform=None, mask_transform=None,
-        data_type='train', in_size=572, out_size=388,
+        data_type='train', in_size=512, out_size=512,
         w0=10, sigma=5, weight_map_dir=None
     ):
         """
@@ -39,11 +39,11 @@ class MitosisDataset(Dataset):
             out_size (int): output size of segmentation map
         """
         self.root_dir = os.getcwd() if not root_dir else root_dir
-        path = os.path.join(self.root_dir, 'processed')
+        path =self.root_dir
         self.train_path = os.path.join(path, 'train', 'input')
         self.t_mask_path = os.path.join(path, 'train', 'output')
         self.val_path = os.path.join(path, 'val', 'input')
-        self.t_val_path = os.path.join(path, 'val', 'output')
+        self.v_mask_path = os.path.join(path, 'val', 'output')
 
         self.data_type = data_type
         self.image_mask_transform = image_mask_transform
@@ -61,20 +61,33 @@ class MitosisDataset(Dataset):
         # n = int(np.ceil(self.images.shape[0] * pct))
 
         if self.data_type == 'train':
-            self.images = io.imread(self.train_path)
-            self.masks = io.imread(self.t_mask_path)
-        elif self.data_type == 'validate':
-            self.images = io.imread(self.val_path)
-            self.masks = io.imread(self.v_mask_path)
+            self.images = [io.imread(os.path.join(self.train_path, f)) for f in os.listdir(self.train_path) if '.png' in f]
+            self.masks = [io.imread(os.path.join(self.t_mask_path, f)) for f in os.listdir(self.t_mask_path) if '.png' in f]
 
-        self.mean = np.average(self.images)
-        self.std = np.std(self.images)
+        elif self.data_type == 'validate':
+            self.images = [io.imread(os.path.join(self.val_path, f)) for f in os.listdir(self.val_path) if '.png' in f]
+            self.masks = [io.imread(os.path.join(self.v_mask_path, f)) for f in os.listdir(self.v_mask_path) if '.png' in f]
+
+        resized_img_arrays = []
+        for image_array in self.images:
+            resized_array = transform.resize(image_array, (in_size, out_size), preserve_range=True)
+            resized_img_arrays.append(resized_array)
+
+        resized_mask_arrays = []
+        for mask_array in self.masks:
+            resized_array = transform.resize(mask_array, (in_size, out_size), preserve_range=True)
+            resized_mask_arrays.append(resized_array)
+
+        self.mean = np.average(resized_img_arrays)
+        self.std = np.std(resized_img_arrays)
         self.w0 = w0
         self.sigma = sigma
         # if weight_map_dir:
         #     self.weight_map = torch.load(weight_map_dir)
         #     print(self.weight_map)
         # if not weight_map_dir:
+        self.images = np.stack(resized_img_arrays)
+        self.masks = np.stack(resized_mask_arrays)
         self.weight_map = self._get_weights(self.w0, self.sigma)
         # torch.save(self.weight_map, 'weight_map.pt')
 

@@ -52,7 +52,7 @@ class UNet(torch.nn.Module):
         """Define contraction block in U-Net
         """
         blocks = []
-        old = 1
+        old = 3
         for i, size in enumerate(self.filter_sizes):
             mpool = nn.MaxPool2d(kernel_size=2)
             conv1 = nn.Conv2d(old, size, kernel_size=3)

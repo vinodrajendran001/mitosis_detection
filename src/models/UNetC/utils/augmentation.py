@@ -5,6 +5,7 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 import random
 import numpy as np
+from skimage.transform import resize
 from scipy.ndimage.interpolation import map_coordinates
 from scipy.ndimage.filters import gaussian_filter
 
@@ -25,11 +26,26 @@ class GaussianNoise:
     def __repr__(self):
         return self.__class__.__name__ + f'(mean={self.mean}, std={self.std})'
 
+
+class DoubleToResize:
+    def __init__(self, size):
+        self.size = size 
+    
+    def __call__(self, image, mask, weight=None):
+        image, mask = resize(image, (self.size,self.size)), resize(mask, (self.size,self.size))
+        if weight is None:
+            return image, mask
+        return image, mask, weight
+        
+    def __repr__(self):
+        return self.__class__.__name__ + '()'
+    
 class DoubleToTensor:
     """Apply horizontal flips to both image and segmentation mask."""
 
     def __init__(self, p=0.5):
         self.p = p
+
 
     def __call__(self, image, mask, weight=None):
         if weight is None:
@@ -137,6 +153,7 @@ class DoubleElasticTransform:
 
 class DoubleCompose(transforms.Compose):
 
+
     def __call__(self, image, mask, weight=None):
         if weight is None:
             for t in self.transforms:
@@ -144,4 +161,6 @@ class DoubleCompose(transforms.Compose):
             return image, mask
         for t in self.transforms:
             image, mask, weight = t(image, mask, weight)
+
         return image, mask, weight
+

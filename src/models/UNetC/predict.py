@@ -29,6 +29,7 @@ def predict(image, model):
     mean = 0.495
     std = 0.173
     image_transform = transforms.Compose([
+        transforms.Resize(size=(512, 512)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std),
         transforms.Pad(30, padding_mode='reflect')
