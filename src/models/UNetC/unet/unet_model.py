@@ -35,7 +35,7 @@ class UNet(torch.nn.Module):
             k = self.n_block - i - 2
             x = self.concat(xs[k], x)
             x = block['conv'](x)
-
+ 
         y_pred = self.segment(x)
 
         return y_pred

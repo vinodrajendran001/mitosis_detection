@@ -23,12 +23,13 @@ class Weighted_Cross_Entropy_Loss(torch.nn.Module):
         super(Weighted_Cross_Entropy_Loss, self).__init__()
 
     def forward(self, pred, target, weights):
+
         n, c, H, W = pred.shape
         # # Calculate log probabilities
         logp = F.log_softmax(pred, dim=1)
 
         # Gather log probabilities with respect to target
-        logp = torch.gather(logp, 1, target.view(n, 1, H, W))
+        logp = torch.gather(logp, 1, target.unsqueeze(1))
 
         # Multiply with weights
         weighted_logp = (logp * weights).view(n, -1)

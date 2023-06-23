@@ -92,10 +92,7 @@ def parse_args():
         '--tensorboard', action='store_true', default=False,
         help='record training log to Tensorboard'
     )
-    parser.add_argument(
-        '--img_size', type=int, default=512, metavar='I',
-        help='random seed (default: 1)'
-    )
+
     parser.add_argument(
         '--data_dir', type=str, default=None,
         help='Root directory of dataset'
@@ -116,20 +113,21 @@ def get_train_loader(mean, std, out_size, batch_size, data_dir):
         pct (float): percentage of data to use for training (0 < pct <= 1)
     """
     image_mask_transform = DoubleCompose([
-        DoubleToResize(size=out_size),
+        DoubleToResize(size=572),
         DoubleToTensor(),   
         # DoubleElasticTransform(alpha=250, sigma=10),
         DoubleHorizontalFlip(),
         DoubleVerticalFlip()
     ])
+
     image_transform = transforms.Compose([
-        transforms.Resize(size=(out_size, out_size)),
+        transforms.Resize(size=(572, 572)),
         transforms.ColorJitter(brightness=0.4),
         transforms.Normalize(mean, std),
         GaussianNoise(),
-        transforms.Pad(30, padding_mode='reflect')
+        # transforms.Pad(30, padding_mode='reflect')
     ])
-    mask_transform = transforms.Resize(size=(out_size, out_size))
+    mask_transform = transforms.Resize(size=(388, 388))
 
     train_data = MitosisDataset(
         root_dir=data_dir,
@@ -154,18 +152,25 @@ def get_test_loader(mean, std, out_size, batch_size, data_dir):
         batch_size (int): number of samples to load for each iteration
     """
     image_transform = transforms.Compose([
-        transforms.Resize(size=(out_size, out_size)),
+        transforms.ToPILImage(),
+        transforms.Resize(size=(572, 572)),
         transforms.ToTensor(),
         transforms.Normalize(mean, std),
-        transforms.Pad(30, padding_mode='reflect')
+        # transforms.Pad(30, padding_mode='reflect')
+    ])
+    image_val_mask_transform = DoubleCompose([
+        DoubleToResize(size=572),
+        DoubleToTensor(),   
     ])
     mask_transform = transforms.Compose([
-        transforms.Resize(size=(out_size, out_size)),
+        transforms.ToPILImage(),
+        transforms.Resize(size=(388, 388)),
         transforms.ToTensor()
     ])
 
     test_data = MitosisDataset(
         root_dir=data_dir,
+        image_mask_transform = image_val_mask_transform,
         image_transform=image_transform,
         mask_transform=mask_transform,
         data_type='validate'
@@ -199,6 +204,7 @@ def train(model, device, data_loader, optimizer, criterion, epoch):
         w = sample['weight'].to(device)
         y = y.squeeze(1).long()  # remove channel dimension
         y_pred = model(X)
+
 
         # back propogation
         loss = criterion(y_pred, y, w)
@@ -237,7 +243,7 @@ def validate(model, device, data_loader, criterion, n_classes):
     pixel_acc = 0.
     with torch.no_grad():
         for sample in data_loader:
-            X = sample['image'].to(device)
+            X = sample['image'].float().to(device)
             y = sample['mask'].to(device)
             w = sample['weight'].to(device)
             y = y.squeeze(1).long()  # remove channel dimension
@@ -327,7 +333,7 @@ if __name__ == '__main__':
     # initialize dataloader
     mean = 0.495
     std = 0.173
-    out_size = args.img_size  # output dimension of segmentation map
+    out_size = 388  # output dimension of segmentation map
     train_loader = get_train_loader(mean, std, out_size, args.batch_size, args.data_dir)
     test_loader = get_test_loader(mean, std, out_size, args.test_batch_size, args.data_dir)
     # define loss function

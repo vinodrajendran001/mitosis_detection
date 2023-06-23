@@ -22,7 +22,7 @@ class MitosisDataset(Dataset):
     def __init__(
         self, root_dir=None,
         image_mask_transform=None, image_transform=None, mask_transform=None,
-        data_type='train', in_size=512, out_size=512,
+        data_type='train', in_size=572, out_size=388,
         w0=10, sigma=5, weight_map_dir=None
     ):
         """
@@ -52,7 +52,7 @@ class MitosisDataset(Dataset):
         self.weight_transform = self.mask_transform
         if self.data_type == 'validate':
             self.weight_transform = transforms.Compose(
-                self.mask_transform.transforms[1:]
+                self.mask_transform.transforms[0:]
             )
         self.n_classes = 2
         # self.images = io.imread(self.train_path)
@@ -70,12 +70,12 @@ class MitosisDataset(Dataset):
 
         resized_img_arrays = []
         for image_array in self.images:
-            resized_array = transform.resize(image_array, (in_size, out_size), preserve_range=True)
+            resized_array = transform.resize(image_array, (in_size, in_size), preserve_range=True)
             resized_img_arrays.append(resized_array)
 
         resized_mask_arrays = []
         for mask_array in self.masks:
-            resized_array = transform.resize(mask_array, (in_size, out_size), preserve_range=True)
+            resized_array = transform.resize(mask_array, (out_size, out_size), preserve_range=True)
             resized_mask_arrays.append(resized_array)
 
         self.mean = np.average(resized_img_arrays)
@@ -102,15 +102,17 @@ class MitosisDataset(Dataset):
         """Returns a image sample from the dataset
         """
         image = self.images[idx]
-        mask = self.masks[idx]
+        mask = self.masks[idx]/255.0
         weight = self.weight_map[idx]
-
+ 
         if self.image_mask_transform:
             image, mask, weight = self.image_mask_transform(
                 image, mask, weight
             )
+
         if self.image_transform:
             image = self.image_transform(image)
+
         if self.mask_transform:
             mask = self.mask_transform(mask)
             weight = self.weight_transform(mask)

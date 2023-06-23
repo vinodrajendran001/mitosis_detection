@@ -114,7 +114,7 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 (seg) user@systemname:project_directory$ python src/data/process_dataset.py --root /path/to/root/folder --train /path/to/train/folder --val /path/to/val/folder
 ```
 
-### UNet model
+### UNet model (Regressor)
 
 ```
 (seg) user@systemname:project_directory$ python src/models/UNet/train.py -d /path/to/root/folder -cp /path/to/save/checkpoints -e 50 -b 8 -l 3e-4 -s 572 -c 1
@@ -134,6 +134,26 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 ```
 
 ![UNet output](reports/figures/unet_output.png)
+
+### UNet model (Classification)
+
+#### Training
+```
+python src/models/UNetC/train.py --batch-size 8 --test-batch-size 8 --epochs 10 --lr 0.0001 --n-classes 2 --data_dir /path/to/data/folder
+```
+
+#### Prediction
+```
+python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/file.png --visualize
+```
+
+| Test Metric         | Score                   |
+| :---:               | :---:                   | 
+| test_loss           |                         |
+| test_mean_accuracy  |                         |
+| test_mean_iou       |                         |
+
+![UNetC output](reports/figures/UNet1_validation.png)
 
 ### Segformer
 
