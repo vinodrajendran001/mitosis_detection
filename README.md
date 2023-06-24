@@ -39,15 +39,14 @@ Project Organization
     │   │   └── make_dataset.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
     │   │
     │   ├── models         <- Scripts to train models and then use trained models to make
     │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
+    │   │   ├── Segformer
+    │   │   └── UNet
+    │   │   └── UNetC
     │   │
     │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
     │
     └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
 
@@ -95,6 +94,18 @@ to one mitosis segment.
 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
 ```
 
+## Create virtual environment
+
+```
+user@systemname:project_directory$ conda craete -n seg python=3.9
+
+(seg) user@systemname:project_directory$ conda activate seg
+
+(seg) user@systemname:project_directory$ conda install nb_conda_kernels
+
+(seg) user@systemname:project_directory$ pip install -r requirements.txt
+```
+
 ## Solution
 
 ### Data stats
@@ -117,7 +128,7 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 ### UNet model (Regressor)
 
 ```
-(seg) user@systemname:project_directory$ python src/models/UNet/train.py -d /path/to/root/folder -cp /path/to/save/checkpoints -e 50 -b 8 -l 3e-4 -s 572 -c 1
+(seg) user@systemname:project_directory$ python src/models/UNet/train.py -d /path/to/root/folder -cp /path/to/save/checkpoints -e 100 -b 8 -l 3e-4 -s 572 -c 1
 ```
 
 ![Model performance](reports/figures/unet_training.png)
@@ -147,13 +158,16 @@ python src/models/UNetC/train.py --batch-size 8 --test-batch-size 8 --epochs 10 
 python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/file.png --visualize
 ```
 
-| Test Metric         | Score                   |
-| :---:               | :---:                   | 
-| test_loss           |                         |
-| test_mean_accuracy  |                         |
-| test_mean_iou       |                         |
+| Test Metric         | Epoch 3 | Epoch 5 | Epoch 8 | Epoch 10 |
+| :---:               | :---:   | :---:   | :---:   | :---:    | 
+| test_loss           | 0.0523  | 0.0063  | 0.0122  | 0.0058   |
+| test_mean_iou       | 0.50    | 0.0790  | 0.9500  | 0.9500   |
+| test_mean_accuracy  | 0.99    | 1.0000  | 1.0000  | 1.0000   |
 
-![UNetC output](reports/figures/UNet1_validation.png)
+![UNetC3 output](reports/figures/UNet3_validation.png)
+![UNetC3 output](reports/figures/UNet5_validation.png)
+![UNetC3 output](reports/figures/UNet8_validation.png)
+![UNetC3 output](reports/figures/UNet10_validation.png)
 
 ### Segformer
 
@@ -175,3 +189,18 @@ python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/fil
 ```
 
 ![Segformer output](reports/figures/segformer_output.png)
+
+
+
+## Summary
+
+- State of the art techniques like UNet and Segformer are experimented for Mitosis detection. 
+- Based on IOU score, UNet model appears to perform well with a score `0.95`.
+- With the IOU score close to 1.0, it is observed that the model fails to predict Mitosis regions instead only background is predicted.
+- As per literature, Segformer achieves state-of-the-art performance on multiple common datasets but with this dataset IOU score of only `0.4995069` is achieved.
+- To enhance the detection performance of mitosis, efficient preprocessing techniques and a larger dataset of images are essential, considering that mitosis regions are small in size and occur infrequently within each image.   
+
+## Next steps
+
+- To preserve vital information that may have been lost during image resizing, it is worth considering the approach of creating patches using a sliding window technique.
+-  

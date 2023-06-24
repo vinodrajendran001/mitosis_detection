@@ -68,6 +68,7 @@ def visualize(image, pred, label=None):
     label[label == 255] = 1
     imgplot = plt.imshow(prediction_to_vis(label))
     ax.set_title('Actual Mask')
+    ax.axis('off')
     ax = fig.add_subplot(1, n_plot, 3)
     print(np.unique(pred))
     print(pred.shape)
@@ -75,14 +76,18 @@ def visualize(image, pred, label=None):
     # ax.set_title('Predicted Mask')
     input_img = Image.fromarray(image).convert("RGBA")
 
-    pred_mask = pred.squeeze(0).cpu().detach().numpy()
+    pred = pred.cpu().detach().numpy()
     # pred_mask = pred.transpose(1,0)
-    predicted_mask = transform.resize(pred_mask, input_img.size, preserve_range=True, mode='constant')
+    predicted_mask = transform.resize(pred, input_img.size, preserve_range=True, mode='constant')
+    predicted_mask[predicted_mask < 0] = 0
+    predicted_mask[predicted_mask > 0] = 1
+    print(np.unique(predicted_mask))
     # predicted_mask = pred_mask.resize(input_img.size)
     imgplot = plt.imshow(prediction_to_vis(predicted_mask))
     ax.set_title('Predicted Mask')
-    predicted_mask = predicted_mask.transpose(1,0)
-    predicted_mask = prediction_to_vis(np.squeeze(predicted_mask))
+    ax.axis('off')
+    # predicted_mask = predicted_mask.transpose(1,0)
+    # predicted_mask = prediction_to_vis(np.squeeze(predicted_mask))
 
 
     # predicted_mask = predicted_mask.resize(img.size)
@@ -90,13 +95,14 @@ def visualize(image, pred, label=None):
     # predicted_mask = predicted_mask.T
     # predicted_mask = prediction_to_vis(predicted_mask)
     
-    predicted_mask = predicted_mask.convert("RGBA")
-    print(input_img.size, predicted_mask.size)
+    # predicted_mask = predicted_mask.convert("RGBA")
+    # print(input_img.size, predicted_mask.size)
 
     # overlay_img = Image.blend(input_img, predicted_mask, 0.9)
     ax = fig.add_subplot(1, n_plot, 1)
     imgplot = plt.imshow(image)
     ax.set_title('Image')
+    ax.axis('off')
     fig.tight_layout()
     plt.savefig(f'reports/figures/{args.model[:-3]}_validation.png')
     plt.show()
