@@ -86,11 +86,11 @@ Each scanned image consists of a raw image, the desired output
 as a pixel list and an overlay of both.
 
 For example:
-
+```
 Input image: A00_00.png
 Annotations: A00_00.csv
 Overlay: A00_00.jpg
-
+```
 The annotations are organized one mitosis per line.
 Each line lists the coordinates of all pixels belonging
 to one mitosis segment.
@@ -101,7 +101,6 @@ github_pat_11ABMD5TQ0OcPIDirqGzCp_zZm4Ltj7bGGzZPHdDyMiVvU6UV6sIx2WYJ8cUHaSby1G3C
 
 ## Create virtual environment
 ================
-
 
 ```
 # create a virtual environment
@@ -140,9 +139,9 @@ user@systemname:project_directory$ conda craete -n seg python=3.9
 
 ### NN Architectures
 
-#### UNet
+#### UNet 
 
-U-Net architecture follows an encode-decode cascade structure, where the encoder gradually compresses information into lower-dimnesional representation. Then the decoder this information back to the original image dimension. Owing to this, the architecture gets an oberall U-shape which leads to the name U-Net.
+U-Net architecture follows an encode-decode cascade structure, where the encoder gradually compresses information into lower-dimnesional representation. Then the decoder this information back to the original image dimension. Owing to this, the architecture gets an overall U-shape which leads to the name U-Net.
 
 ![alt text](https://github.com/hayashimasa/UNet-PyTorch/blob/main/graphs/unet_architecture.png?raw=true)
 
@@ -155,7 +154,7 @@ U-Net architecture follows an encode-decode cascade structure, where the encoder
 
 SegFormer is a Transformer-based framework for semantic segmentation that unifies Transformers with lightweight multilayer perceptron (MLP) decoders.
 
-SegFormer has two appealing features:
+**SegFormer has two appealing features:**
 - SegFormer comprises a novel hierarchically structured Transformer encoder which outputs multiscale features.
 It does not need positional encoding, thereby avoiding the interpolation of positional codes which leads to decreased performance when the testing resolution differs from training.
 - SegFormer avoids complex decoders. The proposed MLP decoder aggregates information from different layers, and thus combining both local attention and global attention to render powerful representations.
@@ -179,14 +178,12 @@ Train-Test split is done by applying 80-20 rule on each subfolder.
 ![Scanners Stats](reports/figures/train_test.png)
 
 
-### UNet model (Regressor)
+### UNet model (version 1.0)
 
 #### Training
 ```
 (seg) user@systemname:project_directory$ python src/models/UNet/train.py -d /path/to/root/folder -cp /path/to/save/checkpoints -e 100 -b 8 -l 3e-4 -s 572 -c 1
 ```
-
-![Model performance](reports/figures/unet_training.png)
 
 | Test Metric         | Score                   |
 | :---:               | :---:                   | 
@@ -204,7 +201,9 @@ Train-Test split is done by applying 80-20 rule on each subfolder.
 
 ![UNet output](reports/figures/unet_output.png)
 
-### UNet model (Classification)
+### UNet model  (version 1.1)
+
+The corresponding binary labels are provided in an in-out fashion, i.e. white for the pixels of segmented objects (mitosis) and black for the rest of pixels.
 
 #### Training
 ```
@@ -256,22 +255,23 @@ python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/fil
 ![Segformer output](reports/figures/segformer_output.png)
 
 
-
 ## Summary
 
-- State of the art techniques like UNet and Segformer are experimented for Mitosis detection. 
-- Based on IOU score, UNet model appears to perform well with a score `0.95`.
-- With the IOU score close to 1.0, it is observed that the model fails to predict Mitosis regions instead only background is predicted.
+- State of the art techniques for image segmentation problems like UNet and Segformer are experimented for Mitosis detection.
+- Neural networks often rely on a large amount of supervised data to obtain good results; therefore, data augmentation is heavily utilized. 
+- Based on IOU score, UNet model appears to perform well with a score of `0.95`.
+- With the UNet's average IOU score close to 1.0, it is observed that the model fails to predict Mitosis regions instead only background is predicted.
 - As per literature, Segformer achieves state-of-the-art performance on multiple common datasets but with this dataset IOU score of only `0.4995069` is achieved.
-- To enhance the detection performance of mitosis, efficient preprocessing techniques and a larger dataset of images are essential, considering that mitosis regions are small in size and occur infrequently within each image.   
+- To enhance the detection performance of mitosis, efficient preprocessing techniques and a larger dataset of images are essential, considering that mitosis regions are small in size and occur infrequently within each image. 
 
 ## Next steps
 
-- **Preprocessing/Augmentation:** To preserve vital information that may have been lost during image resizing, it is worth considering the approach of creating patches using a sliding window technique.
+- **Preprocessing/Augmentation:** To preserve vital information that may have been lost during image resizing, it is worth considering the approach of *creating patches using a sliding window technique*.
 - **Model architecture modifications/Fine-tuning:** For SegFormer, pretrained model used is based out of ADE20K dataset. Idetifying and using a pretrained model which was built using a similar kind of dataset may help to improve the performance. 
 - **Hyperparameter Optimization:** Default hyperparameters are used in the training procedure of UNet and SegFormer, they can be adjusted to suit the task. Perform a grid search or use automated techniques like random search or Bayesian optimization to find the optimal combination of hyperparameters that improves performance.
-- **Post-processing techniques**: Apply post-processing techniques such as morphological operations (e.g., dilation, erosion) or connected component analysis to refine the predicted masks and improve their coherence and smoothness. 
-- **Increase training data:** Acquiring or generating additional training data. Increasing the diversity and size of the training set can enhance the model's ability to learn robust representations and improve its segmentation performance. *Usage of generative models like diffusion, GAN can be used for generating similar kind of training data but it requires domain experts validation.*  
+- **Evaluate and analyze errors:** Need further evaluation on UNet model's training procedure. In particular, the inclination of model towards predicting background than mitosis. Also, on the poor performance of semantic segmentation model with backbones (`models.ipynb`).
+- **Increase training data:** Current dataset consists of only `98` samples. Increasing the diversity and size of the training set can enhance the model's ability to learn robust representations and improve its segmentation performance. *Usage of generative models like diffusion, GAN can be used for generating similar kind of training data but it requires domain experts validation.*  
+
 
 ## References
 1. https://arxiv.org/pdf/1505.04597.pdf
