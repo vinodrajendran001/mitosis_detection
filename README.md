@@ -95,9 +95,6 @@ The annotations are organized one mitosis per line.
 Each line lists the coordinates of all pixels belonging
 to one mitosis segment.
 
-```
-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
-```
 
 ## Create virtual environment
 ================
@@ -215,18 +212,16 @@ python src/models/UNetC/train.py --batch-size 8 --test-batch-size 8 --epochs 10 
 python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/file.png --visualize
 ```
 
-| Test Metric         | Epoch 3 | Epoch 5 | Epoch 8 | Epoch 10 |
-| :---:               | :---:   | :---:   | :---:   | :---:    | 
-| test_loss           | 0.0523  | 0.0063  | 0.0122  | 0.0058   |
-| test_mean_iou       | 0.50    | 0.0790  | 0.9500  | 0.9500   |
-| test_mean_accuracy  | 0.99    | 1.0000  | 1.0000  | 1.0000   |
+| Test Metric         | Epoch 3 | Epoch 8 | Epoch 10 |
+| :---:               | :---:   | :---:   | :---:    | 
+| test_loss           | 0.0523  | 0.0122  | 0.0058   |
+| test_mean_iou       | 0.50    | 0.9500  | 0.9500   |
+| test_mean_accuracy  | 0.99    | 1.0000  | 1.0000   |
 
 #### Sample output
 
 ##### Epoch 3
 ![UNetC3 output](reports/figures/UNet3_validation.png)
-##### Epoch 5
-![UNetC5 output](reports/figures/UNet5_validation.png)
 ##### Epoch 8
 ![UNetC8 output](reports/figures/UNet8_validation.png)
 ##### Epoch 10
