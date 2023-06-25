@@ -61,21 +61,12 @@ Project Organization
 General domain description
 ==========================
 
-Mitotic count is an important parameter in breast cancer grading as it gives an evaluation of the agressiveness of the 
-tumour. However, mitosis detection is a challenging problem and has not been addressed well in the literature. This is due
-to the fact that mitosis are small objects with a large variety of shape configurations. The four main phases of a mitosis
-are prophase, metaphase, anaphase and telophase. The shape of the nucleus  is very different depending on the phase of the
-mitosis. On its last stage, the telophase, a mitosis has two distinct nuclei, but they are not yet full individual cells. 
-A mitosis in telophase must be counted as a single mitosis, it should not be miscounted as two mitosis. Artefacts are also
-common and should not be confused with mitosis. 
+Mitotic count is an important parameter in breast cancer grading as it gives an evaluation of the aggressiveness of the tumor. However, mitosis detection is a challenging problem and has not been addressed well in the literature. This is due to the fact that mitosis are small objects with a large variety of shape configurations. The four main phases of a mitosis are prophase, metaphase, anaphase and telophase. The shape of the nucleus is very different depending on the phase of the mitosis. On its last stage, the telophase, a mitosis has two distinct nuclei, but they are not yet full individual cells. A mitosis in telophase must be counted as a single mitosis, it should not be miscounted as two mitosis. Artifacts are also common and should not be confused with mitosis.
 
-The data you receive are H&E stained histological images of different breast cancers prepared on 5 
-slides and each slide is scanned on two scanners. The data of scanner A can be found in the folders A*; 
-data of scanner H can be found in folders H* (e.g. data of slide 0 scanned on scanner A is in found A00_v2,
-the same slide scanned on scanner H is found in H00_v2).
+The data you receive are H&E stained histological images of different breast cancers prepared on 5 slides and each slide is scanned on two scanners. The data of scanner A can be found in the folders A*; data of scanner H can be found in folders H* (e.g. data of slide 0 scanned on scanner A is found in A00_v2, the same slide scanned on scanner H is found in H00_v2).
 
-Our objective is to develop an algorithm that support histophathologists in the detecting of
-mitosis on these type of images.
+Our objective is to develop an algorithm that support histopathologists in the detection of mitosis on these type of images.
+
 
 Data description
 ================
@@ -138,7 +129,7 @@ user@systemname:project_directory$ conda craete -n seg python=3.9
 
 #### UNet 
 
-U-Net architecture follows an encode-decode cascade structure, where the encoder gradually compresses information into lower-dimnesional representation. Then the decoder this information back to the original image dimension. Owing to this, the architecture gets an overall U-shape which leads to the name U-Net.
+U-Net architecture follows an encode-decode cascade structure, where the encoder gradually compresses information into lower-dimensional representation. Then decoder this information back to the original image dimension. Owing to this, the architecture gets an overall U-shape which leads to the name U-Net.
 
 ![alt text](https://github.com/hayashimasa/UNet-PyTorch/blob/main/graphs/unet_architecture.png?raw=true)
 
@@ -254,7 +245,7 @@ python src/models/UNetC/predict.py --model UNet100.pt --input /path/to/image/fil
 
 - State of the art techniques for image segmentation problems like UNet and Segformer are experimented for Mitosis detection.
 - Neural networks often rely on a large amount of supervised data to obtain good results; therefore, data augmentation is heavily utilized. 
-- Based on IOU score, UNet model appears to perform well with a score of `0.95`.
+- Based on IOU score, UNet model version 1.1 appears to perform well with a score of `0.95`. However, after visualizing the results the UNet model version 1.0 exhibits a decent performance.
 - With the UNet's average IOU score close to 1.0, it is observed that the model fails to predict Mitosis regions instead only background is predicted.
 - As per literature, Segformer achieves state-of-the-art performance on multiple common datasets but with this dataset IOU score of only `0.4995069` is achieved.
 - To enhance the detection performance of mitosis, efficient preprocessing techniques and a larger dataset of images are essential, considering that mitosis regions are small in size and occur infrequently within each image. 
