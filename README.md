@@ -3,6 +3,8 @@ Mitosis Detection
 
 Develop an AI algorithm that support histophathologists in the detection of Mitosis
 
+Presentation: https://docs.google.com/presentation/d/16ApohFR7NkB1aqVO8Jc1ATdNp18EPkizDMBOCcz22RE/edit?usp=sharing
+
 Project Organization
 ------------
 
