@@ -65,9 +65,9 @@ General domain description
 
 Mitotic count is an important parameter in breast cancer grading as it gives an evaluation of the aggressiveness of the tumor. However, mitosis detection is a challenging problem and has not been addressed well in the literature. This is due to the fact that mitosis are small objects with a large variety of shape configurations. The four main phases of a mitosis are prophase, metaphase, anaphase and telophase. The shape of the nucleus is very different depending on the phase of the mitosis. On its last stage, the telophase, a mitosis has two distinct nuclei, but they are not yet full individual cells. A mitosis in telophase must be counted as a single mitosis, it should not be miscounted as two mitosis. Artifacts are also common and should not be confused with mitosis.
 
-The data you receive are H&E stained histological images of different breast cancers prepared on 5 slides and each slide is scanned on two scanners. The data of scanner A can be found in the folders A*; data of scanner H can be found in folders H* (e.g. data of slide 0 scanned on scanner A is found in A00_v2, the same slide scanned on scanner H is found in H00_v2).
+The data provided are H&E stained histological images of different breast cancers prepared on 5 slides and each slide is scanned on two scanners. The data of scanner A can be found in the folders A*; data of scanner H can be found in folders H* (e.g. data of slide 0 scanned on scanner A is found in A00_v2, the same slide scanned on scanner H is found in H00_v2).
 
-Our objective is to develop an algorithm that support histopathologists in the detection of mitosis on these type of images.
+The objective of this small project is to develop an algorithm that support histopathologists in the detection of mitosis on these type of images.
 
 
 Data description
